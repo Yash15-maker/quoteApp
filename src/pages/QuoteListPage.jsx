@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 function QuoteListPage() {
     const [quotes, setQuotes] = useState([]);
@@ -30,7 +31,11 @@ function QuoteListPage() {
             console.error('Failed to fetch quotes', error.response.data.error);
             if (error.response.data.error === "Invalid token") {
                 localStorage.clear('tokenLogin')
-                navigate("/")
+                setTimeout(() => {
+                    toast.error("Please Re-logging your session Expired. ")
+                    navigate("/")
+                }, 500)
+
             }
             setError(true);
         } finally {
