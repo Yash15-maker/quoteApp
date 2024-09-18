@@ -7,6 +7,7 @@ function CreateQuoteForm() {
     const [text, setText] = useState('');
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [creating, setCreating] = useState(false);
     const navigate = useNavigate()
     const handleFileUpload = async () => {
         if (!file) {
@@ -42,7 +43,7 @@ function CreateQuoteForm() {
             toast.error('Please fill in the quote text and upload an image');
             return;
         }
-
+        setCreating(true)
         try {
             await axios.post(
                 'https://assignment.stage.crafto.app/postQuote',
@@ -60,6 +61,7 @@ function CreateQuoteForm() {
             setTimeout(() => {
                 navigate('/quotes');
             }, 1000);
+            setCreating(false)
         } catch (error) {
             toast.error('Failed to create quote');
             if (error.response.data.error === "Invalid token") {
@@ -69,6 +71,7 @@ function CreateQuoteForm() {
                     navigate("/")
                 }, 200)
             }
+            setCreating(false)
             console.error('Failed to create quote', error);
         }
     };
@@ -111,10 +114,10 @@ function CreateQuoteForm() {
 
                     <button
                         onClick={handleSubmit}
-                        disabled={loading}
-                        className={`px-4  py-2 ${loading ? "bg-gray-200" : "bg-green-500"} text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 hover:bg-green-600 transition-all`}
+                        disabled={creating}
+                        className={`px-4  py-2 ${creating ? "bg-gray-200" : "bg-green-500"} text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 transition-all`}
                     >
-                        Create Quote
+                        {creating ? "Creating...." : "Create Quote"}
                     </button>
                 </div>
             </div>
