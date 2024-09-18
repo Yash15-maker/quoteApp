@@ -27,12 +27,16 @@ function QuoteListPage() {
                 setQuotes((prevQuotes) => [...prevQuotes, ...response.data.data]);
             }
         } catch (error) {
-            console.error('Failed to fetch quotes', error);
+            console.error('Failed to fetch quotes', error.response.data.error);
+            if (error.response.data.error === "Invalid token") {
+                localStorage.clear('tokenLogin')
+                navigate("/")
+            }
             setError(true);
         } finally {
             setLoading(false);
         }
-    }, [loading, limit, offset])
+    }, [loading, limit, offset, navigate])
 
     const handleScroll = useCallback(() => {
         if (window.innerHeight + document.documentElement.scrollTop + 100 >= document.documentElement.offsetHeight && loadMore && !loading) {

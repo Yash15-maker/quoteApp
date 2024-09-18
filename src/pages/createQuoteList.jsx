@@ -23,6 +23,13 @@ function CreateQuoteForm() {
         } catch (error) {
             toast.error('Image upload failed');
             console.error('Image upload failed', error);
+            if (error.response.data.error === "Invalid token") {
+                localStorage.clear('tokenLogin')
+                toast.error('Please Re Login Your Session Expired')
+                setTimeout(() => {
+                    navigate("/")
+                }, 200)
+            }
         } finally {
             setLoading(false);
         }
@@ -55,6 +62,13 @@ function CreateQuoteForm() {
             }, 1000);
         } catch (error) {
             toast.error('Failed to create quote');
+            if (error.response.data.error === "Invalid token") {
+                localStorage.clear('tokenLogin')
+                toast.error('Please Re Login Your Session Expired')
+                setTimeout(() => {
+                    navigate("/")
+                }, 200)
+            }
             console.error('Failed to create quote', error);
         }
     };
