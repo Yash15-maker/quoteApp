@@ -2,35 +2,37 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast, Toaster } from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 
 function LoginPage() {
     const [username, setUsername] = useState('');
     const [otp, setOtp] = useState('');
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleLogin = useCallback(async (e) => {
         e.preventDefault();
-        setIsLoading(true)
+        setIsLoading(true);
         try {
             const response = await axios.post('https://assignment.stage.crafto.app/login', { username, otp });
             if (response.data) {
-                localStorage.setItem('tokenLogin', response.data.token);
+                login(response.data.token);
                 toast.success('Login successful!');
-                setIsLoading(false)
+                setIsLoading(false);
                 navigate('/quotes');
             }
         } catch (error) {
-            setIsLoading(false)
+            setIsLoading(false);
             toast.error('Not able to login. Please enter the email or OTP properly.');
             console.error('Login failed', error);
         }
-    }, [username, otp, navigate]);
+    }, [username, otp, navigate, login]);
 
     return (
         <div className="min-h-screen flex items-center justify-center w-full ">
             <Toaster position="top-right" reverseOrder={false} />
-            <div className="bg-white dark:bg-gray-900 shadow-md rounded-lg px-8 py-6 max-w-md">
+            <div className="bg-white dark:bg-gray-900 shadow-md rounded-lg px-8 py-6 max-w-md md:w-[450px] lg:w-[540px]">
                 <h1 className="text-2xl font-bold text-center mb-4 dark:text-gray-200">Welcome Back!</h1>
                 <form onSubmit={handleLogin}>
                     <div className="mb-4">
@@ -65,7 +67,6 @@ function LoginPage() {
                     </button>
                 </form>
             </div>
-
         </div>
     );
 }

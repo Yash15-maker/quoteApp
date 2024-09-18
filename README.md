@@ -9,3 +9,7 @@
 ### 4.> Your server will start
 
 ### 5.> You can see the Deployed version over here https://cute-cajeta-54bfd9.netlify.app/
+
+# Additional Features
+
+## Added the Protected Routes

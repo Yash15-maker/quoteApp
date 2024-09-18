@@ -50,7 +50,9 @@ function CreateQuoteForm() {
             toast.success('Quote Created Successfully');
             setText('');
             localStorage.removeItem('media');
-            navigate('/quotes')
+            setTimeout(() => {
+                navigate('/quotes');
+            }, 1000);
         } catch (error) {
             toast.error('Failed to create quote');
             console.error('Failed to create quote', error);
@@ -61,7 +63,6 @@ function CreateQuoteForm() {
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
             <div className="w-full max-w-lg bg-white rounded-lg shadow-lg p-8">
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create a Quote</h2>
-
                 <div className="mb-4">
                     <label htmlFor="quoteText" className="block text-gray-700 font-medium mb-2">Quote Text</label>
                     <input
@@ -84,7 +85,7 @@ function CreateQuoteForm() {
                     />
                 </div>
 
-                <div className="flex justify-between items-center mt-6">
+                <div className="flex justify-between items-center gap-2 mt-6">
                     <button
                         onClick={handleFileUpload}
                         className={`px-4 py-2 bg-indigo-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 hover:bg-indigo-700 transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''
