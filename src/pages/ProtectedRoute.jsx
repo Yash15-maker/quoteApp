@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import LoginPage from './LoginPage';
 
 const ProtectedRoute = ({ children }) => {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ const ProtectedRoute = ({ children }) => {
         }
     }, [token, navigate]);
 
-    return token ? children : null;
+    return token ? children : <LoginPage />;
 };
 
 ProtectedRoute.propTypes = {
