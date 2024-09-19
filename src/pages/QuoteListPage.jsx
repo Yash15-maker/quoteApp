@@ -13,55 +13,57 @@ function QuoteListPage() {
     const [loadMore, setLoadMore] = useState(true);
     const [error, setError] = useState(false);
     const navigate = useNavigate();
-    const { logout } = useAuth()
+    const { logout } = useAuth();
 
     const fetchQuotes = useCallback(async () => {
-        if (loading) return;
+        if (loading || !loadMore) return;
         setLoading(true);
         setError(false);
+
         try {
             const token = localStorage.getItem('tokenLogin');
             const response = await axios.get(`https://assignment.stage.crafto.app/getQuotes?limit=${limit}&offset=${offset}`, {
                 headers: { Authorization: token },
             });
+
             if (response.data.data.length === 0) {
                 setLoadMore(false);
             } else {
                 setQuotes((prevQuotes) => [...prevQuotes, ...response.data.data]);
+                setOffset((prevOffset) => prevOffset + limit);
             }
         } catch (error) {
-            console.error('Failed to fetch quotes', error.response.data.error);
-            if (error.response.data.error === "Invalid token") {
-                localStorage.clear('tokenLogin')
-                toast.error("Please Re-logging your session Expired.")
+            console.error('Failed to fetch quotes', error.response?.data?.error);
+            if (error.response?.data?.error === "Invalid token") {
+                localStorage.clear('tokenLogin');
+                toast.error("Please Re-logging your session Expired.");
                 setTimeout(() => {
-                    logout()
-                }, 200)
+                    logout();
+                }, 200);
             }
             setError(true);
         } finally {
             setLoading(false);
         }
-    }, [loading, limit, offset, logout])
+    }, [loading, limit, offset, loadMore, logout]);
 
     const handleScroll = useCallback(() => {
-        if (window.innerHeight + document.documentElement.scrollTop + 100 >= document.documentElement.offsetHeight && loadMore && !loading) {
-            setOffset((prevOffset) => prevOffset + limit);
+        if (window.innerHeight + document.documentElement.scrollTop + 100 >= document.documentElement.offsetHeight && !loading && loadMore) {
+            fetchQuotes();
         }
-    }, [limit, loadMore, loading])
+    }, [fetchQuotes, loadMore, loading]);
 
     useEffect(() => {
         fetchQuotes();
-    }, [fetchQuotes, offset]);
+    }, []);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [handleScroll, loadMore, loading]);
+    }, [handleScroll]);
 
     return (
         <div className='px-2 py-2'>
-            {/*<img src="" />*/}
             <button className='lg:p-6 p-3 rounded-xl bg-black z-20 text-white fixed bottom-2 right-2' onClick={() => navigate('/create-quote')}>
                 <IoMdAdd className='text-lg' />
             </button>
@@ -101,7 +103,7 @@ function QuoteListPage() {
             {loading && <div className='text-center py-4'><span className="loader"></span></div>}
             {error && (
                 <div className='text-center py-4'>
-                    <button onClick={() => setOffset(offset + limit)} className='bg-black text-white px-3 py-1.5 rounded-xl'>
+                    <button onClick={fetchQuotes} className='bg-black text-white px-3 py-1.5 rounded-xl'>
                         Load More
                     </button>
                 </div>
