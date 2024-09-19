@@ -62,15 +62,15 @@ function QuoteListPage() {
     return (
         <div className='px-2 py-2'>
             {/*<img src="" />*/}
-            <button className='lg:p-5 p-3 rounded-xl bg-gray-200 z-20 text-black fixed bottom-2 right-2' onClick={() => navigate('/create-quote')}>
+            <button className='lg:p-6 p-3 rounded-xl bg-black z-20 text-white fixed bottom-2 right-2' onClick={() => navigate('/create-quote')}>
                 <IoMdAdd className='text-lg' />
             </button>
             <div className='grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-4'>
                 {quotes.length === 0 && loading ? (
                     <div className='flex justify-center absolute top-[50%] left-[50%]'>
                     </div>
-                ) : quotes.map((quote) => (
-                    <div key={quote.id} className='relative flex flex-col border border-gray-300 shadow-lg rounded-xl h-full'>
+                ) : quotes.map((quote, index) => (
+                    <div key={index} className='relative flex flex-col border border-gray-300 shadow-lg rounded-xl h-full'>
                         <div className='relative h-64'>
                             {quote.mediaUrl ? (
                                 <img
