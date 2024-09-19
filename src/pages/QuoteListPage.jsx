@@ -3,6 +3,7 @@ import axios from 'axios';
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 
 function QuoteListPage() {
     const [quotes, setQuotes] = useState([]);
@@ -12,6 +13,7 @@ function QuoteListPage() {
     const [loadMore, setLoadMore] = useState(true);
     const [error, setError] = useState(false);
     const navigate = useNavigate();
+    const { logout } = useAuth()
 
     const fetchQuotes = useCallback(async () => {
         if (loading) return;
@@ -31,17 +33,16 @@ function QuoteListPage() {
             console.error('Failed to fetch quotes', error.response.data.error);
             if (error.response.data.error === "Invalid token") {
                 localStorage.clear('tokenLogin')
+                toast.error("Please Re-logging your session Expired.")
                 setTimeout(() => {
-                    toast.error("Please Re-logging your session Expired. ")
-                    navigate("/")
-                }, 500)
-
+                    logout()
+                }, 200)
             }
             setError(true);
         } finally {
             setLoading(false);
         }
-    }, [loading, limit, offset, navigate])
+    }, [loading, limit, offset, logout])
 
     const handleScroll = useCallback(() => {
         if (window.innerHeight + document.documentElement.scrollTop + 100 >= document.documentElement.offsetHeight && loadMore && !loading) {

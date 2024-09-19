@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function CreateQuoteForm() {
     const [text, setText] = useState('');
@@ -9,6 +10,7 @@ function CreateQuoteForm() {
     const [loading, setLoading] = useState(false);
     const [creating, setCreating] = useState(false);
     const navigate = useNavigate()
+    const { logout } = useAuth()
     const handleFileUpload = async () => {
         if (!file) {
             toast.error('Please select an image');
@@ -65,10 +67,9 @@ function CreateQuoteForm() {
         } catch (error) {
             toast.error('Failed to create quote');
             if (error.response.data.error === "Invalid token") {
-                localStorage.clear('tokenLogin')
                 toast.error('Please Re Login Your Session Expired')
                 setTimeout(() => {
-                    navigate("/")
+                    logout()
                 }, 200)
             }
             setCreating(false)
